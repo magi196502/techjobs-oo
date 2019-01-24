@@ -28,9 +28,7 @@ public class JobController {
         // TODO #1 - get the Job with the given ID and pass it into the view
         Job job = jobData.findById(id);
 
-//      model.addAttribute("title", "Jobs with " + column.getName() + ": " + name);
         model.addAttribute("job", job);
-
 
         return "job-detail";
     }
@@ -48,7 +46,22 @@ public class JobController {
         // new Job and add it to the jobData data store. Then
         // redirect to the job detail view for the new Job.
 
-        return "";
+        if (errors.hasErrors()) {
+            model.addAttribute(jobForm);
+            return "new-job";
+        }
+
+        Job newJob = new Job(
+                jobForm.getName(),
+                jobData.getEmployers().findById(jobForm.getEmployerId()),
+                jobData.getLocations().findById(jobForm.getLocationId()),
+                jobData.getPositionTypes().findById(jobForm.getPositionTypeId()),
+                jobData.getCoreCompetencies().findById(jobForm.getCoreCompetencyId())
+        );
+
+        jobData.add(newJob);
+
+        return "redirect:?id=" + newJob.getId();
 
     }
 }
